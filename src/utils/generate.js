@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-const generateTokenSetCookie = (userId, res) => {
-   const token = jwt.sign({ userId }, process.env.JWT_SECRET,{
+const generateTokenSetCookie = (userId, role,res) => {
+   const token = jwt.sign({ userId, role }, process.env.JWT_SECRET,{
  
     expiresIn: '1week'
    });
@@ -13,6 +13,8 @@ const generateTokenSetCookie = (userId, res) => {
     secure: process.env.NODE_ENV  ===" production",//ookie over HTTPS in production
     domain: new URL(process.env.FRONTEND_URL).hostname,//set the domain hereeeee
     });
+
+    return token;
 };
 
 export default generateTokenSetCookie;

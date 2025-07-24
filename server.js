@@ -4,6 +4,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './src/config/connection.js';
 import userRoutes from './src/routes/userRoutes.js';  // Import your user routes
+import eventsRoutes from './src/routes/eventsRoutes.js'; // Import your events routes
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.get('/', (req, res) => {
 
 // Mount user routes under /api/users
 app.use('/api/users', userRoutes);
+app.use('/api/events', eventsRoutes); // Mount events routes under /api/events
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

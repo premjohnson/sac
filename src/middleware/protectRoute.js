@@ -3,11 +3,10 @@ import jwt from 'jsonwebtoken';
 export const authenticateToken = (req, res, next) => {
   let token = null;
 
-  // Get token from cookie OR from Authorization header
-  if (req.cookies && req.cookies.jwt) {
+  if (req.cookies?.jwt) {
     token = req.cookies.jwt;
   } else if (
-    req.headers.authorization &&
+    typeof req.headers.authorization === 'string' &&
     req.headers.authorization.startsWith('Bearer ')
   ) {
     token = req.headers.authorization.split(' ')[1];
@@ -17,9 +16,13 @@ export const authenticateToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // decoded contains { userId, iat, exp }
+    req.user = decoded; // contains { userId, role, iat, exp }
     next();
   } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      console.warn('JWT expired:', err.expiredAt);
+      return res.status(401).json({ message: 'Token expired' });
+    }
     console.error('JWT Verification Error:', err);
     return res.status(403).json({ message: 'Invalid token' });
   }
